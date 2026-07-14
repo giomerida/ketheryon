@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ketheryon — Goggles para aguas abiertas y triatlón</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --abyss:#071A2C;
+    --deep:#0F3654;
+    --ocean:#1C5C86;
+    --aqua:#3FB6E0;
+    --aqua-dim: rgba(63,182,224,0.35);
+    --foam:#EAF3F8;
+    --foam-2:#F7FBFD;
+    --ink:#0B2436;
+    --mist:#6E93A8;
+    --line: rgba(234,243,248,0.14);
+  }
+ 
+  *{margin:0;padding:0;box-sizing:border-box;}
+ 
+  html{scroll-behavior:smooth;}
+ 
+  body{
+    background:var(--foam-2);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+ 
+  h1,h2,h3, .display{
+    font-family:'Big Shoulders Display',sans-serif;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    line-height:0.95;
+  }
+ 
+  .mono{
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:0.02em;
+  }
+ 
+  a{color:inherit;text-decoration:none;}
+ 
+  img,svg{display:block;max-width:100%;}
+ 
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+ 
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+ 
+  /* ---------- Horizon progress line (signature element) ---------- */
+  .horizon-track{
+    position:fixed;
+    top:0;left:0;right:0;
+    height:3px;
+    background:rgba(7,26,44,0.35);
+    z-index:60;
+  }
+  .horizon-fill{
+    height:100%;
+    width:0%;
+    background:var(--aqua);
+    position:relative;
+    transition:width 0.05s linear;
+  }
+  .horizon-fill::after{
+    content:'';
+    position:absolute;
+    right:-4px; top:50%;
+    width:9px;height:9px;
+    background:var(--aqua);
+    border-radius:50%;
+    transform:translateY(-50%);
+    box-shadow:0 0 0 4px rgba(63,182,224,0.25);
+  }
+ 
+  /* ---------- Nav ---------- */
+  header{
+    position:fixed;
+    top:3px;left:0;right:0;
+    z-index:50;
+    padding:22px 0;
+    transition:background 0.35s ease, padding 0.35s ease, backdrop-filter 0.35s ease;
+  }
+  header.scrolled{
+    background:rgba(7,26,44,0.92);
+    backdrop-filter: blur(10px);
+    padding:14px 0;
+    box-shadow:0 1px 0 var(--line);
+  }
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    color:var(--foam);
+  }
+  .logo{
+    font-family:'Big Shoulders Display',sans-serif;
+    font-weight:800;
+    font-size:22px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .logo-mark{width:22px;height:22px;flex-shrink:0;}
+  .nav-links{
+    display:flex;
+    gap:38px;
+    font-size:14px;
+    letter-spacing:0.03em;
+  }
+  .nav-links a{
+    opacity:0.78;
+    transition:opacity 0.2s ease;
+    position:relative;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible{opacity:1;}
+  .nav-right{display:flex;align-items:center;gap:22px;}
+  .cart-btn{
+    display:flex;align-items:center;gap:8px;
+    font-size:14px;
+    color:var(--foam);
+  }
+  .cart-count{
+    background:var(--aqua);
+    color:var(--abyss);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    font-weight:600;
+    width:18px;height:18px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+ 
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--aqua);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+ 
+  /* ---------- Banner (portada con imagen de marca) ---------- */
+  .banner{
+    position:relative;
+    height:100vh;
+    min-height:600px;
+    max-height:920px;
+    overflow:hidden;
+    background:var(--abyss);
+  }
+  .banner-img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:50% 28%;
+    display:block;
+  }
+  .banner-fade{
+    position:absolute;
+    left:0;right:0;bottom:0;
+    height:42%;
+    background:linear-gradient(180deg, rgba(7,26,44,0) 0%, var(--abyss) 94%);
+    pointer-events:none;
+  }
+  .scroll-cue{
+    position:absolute;
+    bottom:30px;left:50%;
+    transform:translateX(-50%);
+    width:26px;height:42px;
+    border:1.5px solid rgba(234,243,248,0.55);
+    border-radius:14px;
+    display:flex;
+    justify-content:center;
+    padding-top:8px;
+  }
+  .scroll-cue span{
+    width:4px;height:8px;
+    background:var(--aqua);
+    border-radius:2px;
+    animation:scrollcue 1.8s ease infinite;
+  }
+  @keyframes scrollcue{
+    0%{opacity:1;transform:translateY(0);}
+    70%{opacity:0;transform:translateY(14px);}
+    100%{opacity:0;transform:translateY(14px);}
+  }
+ 
+  /* ---------- Hero (declaración, bajo el banner) ---------- */
+  .hero{
+    background:var(--abyss);
+    color:var(--foam);
+    padding:20px 0 110px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::after{
+    content:'';
+    position:absolute;
+    left:0;right:0;bottom:0;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--aqua-dim), transparent);
+  }
+  .hero-single{
+    max-width:720px;
+    margin:0 auto;
+    text-align:center;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    color:var(--aqua);
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    margin-bottom:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+  .eyebrow::before, .eyebrow::after{
+    content:'';
+    width:26px;height:1px;
+    background:var(--aqua);
+  }
+  .hero h1{
+    font-size:clamp(48px,6vw,84px);
+    color:var(--foam);
+    margin-bottom:26px;
+  }
+  .hero h1 span{color:var(--aqua);}
+  .hero p.lead{
+    font-size:18px;
+    color:var(--mist);
+    max-width:460px;
+    margin:0 auto 40px;
+  }
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
+ 
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:15px 28px;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    border-radius:2px;
+    transition:transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color .2s ease;
+  }
+  .btn-primary{background:var(--aqua);color:var(--abyss);}
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-ghost{border:1px solid rgba(234,243,248,0.3);color:var(--foam);}
+  .btn-ghost:hover{border-color:var(--aqua);color:var(--aqua);transform:translateY(-2px);}
+ 
+  .hero-stats{
+    display:flex;
+    gap:44px;
+    margin-top:64px;
+    padding-top:32px;
+    border-top:1px solid var(--line);
+    justify-content:center;
+  }
+  .stat{text-align:center;}
+  .stat .num{font-family:'JetBrains Mono',monospace;font-size:26px;color:var(--aqua);font-weight:500;}
+  .stat .label{font-size:12px;color:var(--mist);text-transform:uppercase;letter-spacing:0.06em;margin-top:4px;}
+ 
+  /* ---------- Section shared ---------- */
+  section{padding:120px 0;}
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:40px;
+    margin-bottom:64px;
+  }
+  .section-head h2{font-size:clamp(34px,4vw,52px);color:var(--ink);}
+  .section-head p{max-width:340px;color:var(--mist);font-size:15px;}
+  .tag-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ocean);
+    margin-bottom:16px;
+  }
+ 
+  /* ---------- Philosophy ---------- */
+  .philosophy{background:var(--foam);}
+  .philosophy-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--line-light,rgba(11,36,54,0.08));
+    border:1px solid rgba(11,36,54,0.08);
+  }
+  .philosophy-item{
+    background:var(--foam-2);
+    padding:38px 34px;
+  }
+  .philosophy-item .mono-tag{font-size:12px;color:var(--ocean);margin-bottom:18px;display:block;}
+  .philosophy-item h3{font-size:22px;color:var(--ink);margin-bottom:12px;text-transform:none;font-weight:700;letter-spacing:0;}
+  .philosophy-item p{color:var(--mist);font-size:14.5px;}
+ 
+  /* ---------- Historia ---------- */
+  .story{background:var(--abyss);color:var(--foam);}
+  .story-grid{
+    display:grid;
+    grid-template-columns:0.55fr 1.45fr;
+    gap:70px;
+  }
+  .story-visual{
+    position:sticky;
+    top:120px;
+    align-self:start;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+  }
+  .story-visual svg{width:170px;}
+  .story-tagline{
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--aqua);
+  }
+  .story-title{
+    font-size:clamp(32px,4vw,50px);
+    color:var(--foam);
+    margin-bottom:28px;
+  }
+  .story-title span{color:var(--aqua);}
+  .story-copy p{
+    color:var(--mist);
+    font-size:16.5px;
+    max-width:640px;
+    margin-bottom:22px;
+  }
+  .story-pull{
+    font-family:'Big Shoulders Display',sans-serif;
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:26px;
+    line-height:1.2;
+    color:var(--foam) !important;
+    border-left:2px solid var(--aqua);
+    padding:4px 0 4px 22px;
+    margin:32px 0 !important;
+    max-width:560px;
+  }
+  .story-signoff{
+    font-family:'JetBrains Mono',monospace;
+    color:var(--aqua) !important;
+    font-size:14px;
+    letter-spacing:0.06em;
+    margin-top:36px !important;
+  }
+ 
+  /* ---------- Products ---------- */
+  .products{background:var(--foam-2);}
+  .product-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:32px;
+  }
+  .product-card{
+    background:var(--abyss);
+    border:1px solid rgba(234,243,248,0.08);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .product-media{
+    aspect-ratio:4/3;
+    background:linear-gradient(160deg, var(--deep), var(--abyss));
+    position:relative;
+    display:flex;align-items:center;justify-content:center;
+    padding:30px;
+  }
+  .product-media svg{width:78%;}
+  .product-badge{
+    position:absolute;top:20px;left:20px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--aqua);
+    border:1px solid var(--aqua-dim);
+    padding:5px 10px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  .product-body{padding:34px;color:var(--foam);flex:1;display:flex;flex-direction:column;}
+  .product-body h3{font-size:30px;color:var(--foam);margin-bottom:6px;}
+  .product-sub{color:var(--mist);font-size:13.5px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:22px;}
+  .specs{
+    list-style:none;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px 18px;
+    margin-bottom:28px;
+    padding-bottom:28px;
+    border-bottom:1px solid var(--line);
+  }
+  .specs li{font-size:13px;color:var(--mist);}
+  .specs li b{display:block;color:var(--foam);font-size:14.5px;font-weight:600;margin-top:2px;font-family:'JetBrains Mono',monospace;}
+  .product-footer{
+    margin-top:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .price{font-family:'JetBrains Mono',monospace;font-size:22px;color:var(--aqua);}
+  .add-btn{
+    background:var(--foam);
+    color:var(--abyss);
+    padding:13px 22px;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    transition:background 0.2s ease;
+  }
+  .add-btn:hover{background:var(--aqua);}
+ 
+  /* ---------- Technology ---------- */
+  .tech{background:var(--abyss);color:var(--foam);}
+  .tech .section-head h2{color:var(--foam);}
+  .tech .section-head p{color:var(--mist);}
+  .tech-grid{
+    display:grid;
+    grid-template-columns:0.9fr 1.1fr;
+    gap:70px;
+    align-items:center;
+  }
+  .tech-visual svg{width:100%;}
+  .tech-list{list-style:none;}
+  .tech-list li{
+    display:grid;
+    grid-template-columns:64px 1fr;
+    gap:24px;
+    padding:26px 0;
+    border-top:1px solid var(--line);
+  }
+  .tech-list li:last-child{border-bottom:1px solid var(--line);}
+  .tech-num{font-family:'JetBrains Mono',monospace;color:var(--aqua);font-size:14px;}
+  .tech-list h4{font-size:18px;font-weight:700;text-transform:none;letter-spacing:0;margin-bottom:8px;}
+  .tech-list p{color:var(--mist);font-size:14.5px;max-width:440px;}
+ 
+  /* ---------- FAQ ---------- */
+  .faq{background:var(--abyss);color:var(--foam);}
+  .faq .section-head h2{color:var(--foam);}
+  .faq .section-head p{color:var(--mist);}
+  .faq-list{max-width:760px;}
+  .faq-item{
+    border-bottom:1px solid var(--line);
+  }
+  .faq-item:first-child{border-top:1px solid var(--line);}
+  .faq-q{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:26px 4px;
+    font-family:'Big Shoulders Display',sans-serif;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    font-size:22px;
+    color:var(--foam);
+    text-align:left;
+  }
+  .faq-icon{
+    font-family:'JetBrains Mono',monospace;
+    color:var(--aqua);
+    font-size:20px;
+    flex-shrink:0;
+    margin-left:20px;
+    transition:transform 0.25s ease;
+  }
+  .faq-item.open .faq-icon{transform:rotate(45deg);}
+  .faq-a{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.3s ease, padding 0.3s ease;
+  }
+  .faq-item.open .faq-a{max-height:200px;padding-bottom:24px;}
+  .faq-a p{
+    color:var(--mist);
+    font-size:14.5px;
+    font-style:italic;
+    max-width:560px;
+    padding:0 4px;
+  }
+ 
+  /* ---------- Video de opinión ---------- */
+  .video-testimonial{
+    margin-top:64px;
+    display:grid;
+    grid-template-columns:1fr 320px;
+    gap:40px;
+    align-items:center;
+    padding-top:56px;
+    border-top:1px solid rgba(11,36,54,0.1);
+  }
+  .video-frame{
+    background:var(--abyss);
+    aspect-ratio:1920/1080;
+    position:relative;
+    overflow:hidden;
+    border:1px solid rgba(234,243,248,0.1);
+  }
+  .video-placeholder{
+    position:absolute;inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    background:
+      repeating-linear-gradient(135deg, rgba(63,182,224,0.06) 0 2px, transparent 2px 14px),
+      radial-gradient(ellipse at 50% 40%, var(--deep), var(--abyss) 75%);
+  }
+  .play-btn{
+    width:56px;height:56px;
+    border-radius:50%;
+    background:var(--aqua);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:6px;
+  }
+  .video-label{color:var(--foam);font-size:14px;font-weight:600;}
+  .video-dim{color:var(--mist);font-size:12px;}
+  .video-caption p{color:var(--mist);font-size:14.5px;}
+ 
+  /* ---------- Testimonials ---------- */
+  .voices{background:var(--foam);}
+  .voices-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:28px;
+  }
+  .voice-card{
+    background:var(--foam-2);
+    border:1px solid rgba(11,36,54,0.08);
+    padding:32px;
+  }
+  .voice-card p.quote{font-size:15.5px;color:var(--ink);margin-bottom:22px;}
+  .voice-meta{font-size:12.5px;color:var(--mist);text-transform:uppercase;letter-spacing:0.05em;}
+  .voice-meta b{color:var(--ocean);display:block;font-size:13.5px;letter-spacing:0.02em;text-transform:none;margin-bottom:2px;}
+ 
+  /* ---------- Newsletter / CTA ---------- */
+  .cta-band{
+    background:var(--ocean);
+    color:var(--foam);
+    padding:90px 0;
+  }
+  .cta-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:40px;
+    flex-wrap:wrap;
+  }
+  .cta-inner h2{font-size:clamp(28px,3.4vw,42px);max-width:520px;}
+  .cta-form{display:flex;gap:10px;}
+  .cta-form input{
+    background:rgba(7,26,44,0.2);
+    border:1px solid rgba(234,243,248,0.35);
+    padding:14px 16px;
+    color:var(--foam);
+    font-size:14px;
+    min-width:240px;
+  }
+  .cta-form input::placeholder{color:rgba(234,243,248,0.6);}
+  .cta-form button{
+    background:var(--abyss);
+    color:var(--foam);
+    padding:14px 24px;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .cta-form button:hover{background:var(--aqua);color:var(--abyss);}
+ 
+  /* ---------- Footer ---------- */
+  footer{background:var(--abyss);color:var(--mist);padding:60px 0 34px;}
+  .footer-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr;
+    gap:40px;
+    padding-bottom:40px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:26px;
+  }
+  .footer-brand .logo{color:var(--foam);margin-bottom:14px;}
+  .footer-brand p{font-size:14px;max-width:280px;}
+  .footer-col h5{
+    color:var(--foam);
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:16px;
+  }
+  .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+  .footer-col a{font-size:14px;transition:color .2s;}
+  .footer-col a:hover{color:var(--aqua);}
+  .footer-bottom{display:flex;justify-content:space-between;font-size:12.5px;flex-wrap:wrap;gap:10px;}
+ 
+  /* ---------- Cart drawer ---------- */
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(7,26,44,0.55);
+    opacity:0;pointer-events:none;
+    transition:opacity 0.3s ease;
+    z-index:70;
+  }
+  .overlay.open{opacity:1;pointer-events:auto;}
+  .drawer{
+    position:fixed;
+    top:0;right:0;bottom:0;
+    width:min(420px,92vw);
+    background:var(--foam-2);
+    z-index:80;
+    transform:translateX(100%);
+    transition:transform 0.35s cubic-bezier(.4,0,.2,1);
+    display:flex;flex-direction:column;
+  }
+  .drawer.open{transform:translateX(0);}
+  .drawer-head{
+    padding:26px 28px;
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid rgba(11,36,54,0.1);
+  }
+  .drawer-head h3{font-size:20px;color:var(--ink);letter-spacing:0.02em;}
+  .drawer-close{font-size:22px;color:var(--mist);line-height:1;}
+  .drawer-body{flex:1;overflow-y:auto;padding:20px 28px;}
+  .drawer-empty{color:var(--mist);font-size:14px;padding:40px 0;text-align:center;}
+  .cart-item{
+    display:grid;
+    grid-template-columns:64px 1fr auto;
+    gap:16px;
+    padding:18px 0;
+    border-bottom:1px solid rgba(11,36,54,0.08);
+    align-items:center;
+  }
+  .cart-item-thumb{
+    width:64px;height:64px;
+    background:var(--abyss);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .cart-item-thumb svg{width:70%;}
+  .cart-item-name{font-size:14.5px;font-weight:600;color:var(--ink);margin-bottom:4px;}
+  .cart-item-price{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--mist);}
+  .qty-control{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .qty-control button{
+    width:22px;height:22px;
+    border:1px solid rgba(11,36,54,0.2);
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;color:var(--ink);
+  }
+  .qty-control span{font-family:'JetBrains Mono',monospace;font-size:13px;min-width:14px;text-align:center;}
+  .remove-btn{font-size:12px;color:var(--mist);text-decoration:underline;margin-top:6px;}
+  .drawer-foot{padding:24px 28px 30px;border-top:1px solid rgba(11,36,54,0.1);}
+  .drawer-total{display:flex;justify-content:space-between;font-size:15px;margin-bottom:18px;}
+  .drawer-total b{font-family:'JetBrains Mono',monospace;font-size:19px;}
+  .checkout-btn{
+    width:100%;
+    background:var(--ocean);
+    color:var(--foam);
+    padding:16px;
+    text-transform:uppercase;
+    font-size:13.5px;
+    letter-spacing:0.05em;
+    font-weight:600;
+    transition:background .2s;
+  }
+  .checkout-btn:hover{background:var(--aqua);color:var(--abyss);}
+  .drawer-note{font-size:11.5px;color:var(--mist);margin-top:12px;text-align:center;}
+ 
+  .toast{
+    position:fixed;
+    bottom:28px;left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--abyss);
+    color:var(--foam);
+    padding:14px 22px;
+    font-size:13.5px;
+    border:1px solid var(--aqua-dim);
+    opacity:0;
+    pointer-events:none;
+    transition:all .3s ease;
+    z-index:90;
+    display:flex;align-items:center;gap:10px;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--aqua);}
+ 
+  @media (max-width:860px){
+    .tech-grid{grid-template-columns:1fr;}
+    .product-grid, .philosophy-grid, .voices-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:1fr;gap:32px;}
+    .nav-links{display:none;}
+    section{padding:80px 0;}
+    .banner{height:78vh;min-height:460px;}
+    .hero{padding:0 0 70px;}
+    .section-head{flex-direction:column;align-items:flex-start;}
+    .cta-inner{flex-direction:column;align-items:flex-start;}
+    .story-grid{grid-template-columns:1fr;}
+    .story-visual{position:static;margin-bottom:30px;}
+    .faq-q{font-size:18px;}
+    .video-testimonial{grid-template-columns:1fr;}
+  }
+ 
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; scroll-behavior:auto !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+ 
+  <div class="horizon-track"><div class="horizon-fill" id="horizonFill"></div></div>
+ 
+  <header id="siteHeader">
+    <div class="wrap">
+      <nav>
+        <a href="#top" class="logo">
+          <svg class="logo-mark" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#3FB6E0" stroke-width="1.6"/><path d="M4 12h16" stroke="#3FB6E0" stroke-width="1.6"/></svg>
+          Ketheryon
+        </a>
+        <div class="nav-links">
+          <a href="#productos">Goggles</a>
+          <a href="#historia">Historia</a>
+          <a href="#tecnologia">Tecnología</a>
+          <a href="#preguntas">Preguntas</a>
+          <a href="#voces">Atletas</a>
+        </div>
+        <div class="nav-right">
+          <button class="cart-btn" id="cartToggle" aria-label="Abrir carrito">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h2l1.5 11.5A2 2 0 0 0 9.5 19h8a2 2 0 0 0 2-1.7L21 8H7" stroke="#EAF3F8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="21" r="1.2" fill="#EAF3F8"/><circle cx="18" cy="21" r="1.2" fill="#EAF3F8"/></svg>
+            Carrito <span class="cart-count" id="cartCount">0</span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+ 
+  <main id="top">
+    <section class="banner">
+      <img src="ketheryon-banner.jpg" alt="Ketheryon — ballena emergiendo del océano, adáptate al agua" class="banner-img">
+      <div class="banner-fade"></div>
+      <a href="#intro" class="scroll-cue" aria-label="Bajar a la siguiente sección">
+        <span></span>
+      </a>
+    </section>
+ 
+    <section class="hero" id="intro">
+      <div class="wrap hero-single">
+        <div class="eyebrow">Aguas abiertas / Triatlón</div>
+        <h1>Encuentra<br>la línea. <span>Nada</span><br>la distancia.</h1>
+        <p class="lead">Goggles diseñados para quien sale del carril y entra al mar, al lago o al río. Visión periférica amplia, sellado que resiste el frío y una óptica pensada para sesgar contra el sol de la salida.</p>
+        <div class="hero-ctas">
+          <a href="#productos" class="btn btn-primary">Ver goggles</a>
+          <a href="#historia" class="btn btn-ghost">Nuestra historia</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><div class="num">180°</div><div class="label">Campo de visión</div></div>
+          <div class="stat"><div class="num">12°C</div><div class="label">Sellado probado desde</div></div>
+          <div class="stat"><div class="num">02</div><div class="label">Modelos disponibles</div></div>
+        </div>
+      </div>
+    </section>
+ 
+    <section class="philosophy" id="filosofia">
+      <div class="wrap">
+        <div class="tag-eyebrow">La marca</div>
+        <div class="section-head">
+          <h2>Construidos para<br>agua sin carriles</h2>
+          <p>El agua abierta no perdona errores de fabricación. Cada goggle Ketheryon se prueba en condiciones reales antes de llevar el nombre.</p>
+        </div>
+        <div class="philosophy-grid">
+          <div class="philosophy-item">
+            <span class="mono-tag">01 / Visión</span>
+            <h3>Sin puntos ciegos</h3>
+            <p>Curvatura de lente diseñada para ampliar el campo periférico, clave para ubicar boyas y nadadores sin perder el ritmo de brazada.</p>
+          </div>
+          <div class="philosophy-item">
+            <span class="mono-tag">02 / Sellado</span>
+            <h3>Frío, oleaje, sal</h3>
+            <p>Empaque de silicona de doble densidad que mantiene el sellado en agua fría y con el movimiento constante del oleaje abierto.</p>
+          </div>
+          <div class="philosophy-item">
+            <span class="mono-tag">03 / Transición</span>
+            <h3>Pensado para T1</h3>
+            <p>Hebillas de liberación rápida y ajuste sin herramientas, para que la salida del agua a la bicicleta no reste segundos.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <section class="story" id="historia">
+      <div class="wrap story-grid">
+        <div class="story-visual">
+          <svg viewBox="0 0 220 220" fill="none">
+            <circle cx="110" cy="110" r="95" stroke="#1C5C86" stroke-width="1"/>
+            <path d="M40 128c22-4 40-30 55-46 20-22 46-30 78-24-10 24-30 40-52 48 8 14 8 30 0 42-18-4-32-16-38-32-16 8-30 10-43 12z" fill="url(#lensGrad)" opacity="0.85" stroke="#3FB6E0" stroke-width="1.5" stroke-linejoin="round"/>
+            <circle cx="150" cy="80" r="2.4" fill="#071A2C"/>
+          </svg>
+          <span class="story-tagline mono">Adáptate al agua</span>
+        </div>
+        <div class="story-copy">
+          <div class="tag-eyebrow">La historia</div>
+          <h2 class="story-title">Ketheryon<br><span>renace del agua</span></h2>
+          <p>Hay momentos en los que el mar pone a prueba cada decisión, cada respiración y cada brazada.</p>
+          <p>KETHERYON nació precisamente de esa experiencia. No surgió en una oficina ni detrás de un escritorio; nació entre amaneceres frente al océano, entrenamientos en aguas abiertas y el deseo de crear un producto diseñado por quienes realmente viven el deporte.</p>
+          <p>La palabra KETHERYON representa transformación, adaptación y renacimiento. Porque el agua nunca lucha contra los obstáculos; los rodea, se adapta y continúa avanzando. Esa misma filosofía inspira nuestra marca.</p>
+          <p>Nuestro símbolo, la ballena, representa fuerza, libertad, inteligencia y conexión con el océano. Es un recordatorio de que los grandes desafíos no se vencen con fuerza bruta, sino con constancia, disciplina y respeto por el entorno.</p>
+          <p>Cada modelo de KETHERYON está pensado para acompañar a nadadores, triatletas y amantes del mar que buscan algo más que unos goggles. Buscan confianza, rendimiento y la sensación de pertenecer a una comunidad que entiende que cada entrenamiento es una oportunidad para superarse.</p>
+          <p>Desde las aguas de Los Cabos hasta cualquier rincón donde exista alguien dispuesto a desafiar sus límites, KETHERYON tiene una misión:</p>
+          <p class="story-pull">Inspirar a las personas a adaptarse, evolucionar y renacer en cada reto.</p>
+          <p>Porque el agua cambia de forma, pero nunca pierde su esencia.</p>
+          <p class="story-signoff">KETHERYON — Adáptate al agua 🌊🐋</p>
+        </div>
+      </div>
+    </section>
+ 
+    <section class="products" id="productos">
+      <div class="wrap">
+        <div class="tag-eyebrow">Catálogo</div>
+        <div class="section-head">
+          <h2>Dos modelos.<br>Un mismo estándar.</h2>
+          <p>Elige según tu distancia y tu disciplina. Ambos incluyen funda y ajuste de nariz intercambiable.</p>
+        </div>
+ 
+        <div class="product-grid">
+ 
+          <article class="product-card">
+            <div class="product-media">
+              <span class="product-badge">Aguas abiertas</span>
+              <svg viewBox="0 0 300 180" fill="none">
+                <ellipse cx="95" cy="90" rx="62" ry="50" fill="#12587D" stroke="#3FB6E0" stroke-width="2"/>
+                <ellipse cx="205" cy="90" rx="62" ry="50" fill="#12587D" stroke="#3FB6E0" stroke-width="2"/>
+                <ellipse cx="95" cy="90" rx="62" ry="50" fill="url(#lensGrad)" opacity="0.55"/>
+                <ellipse cx="205" cy="90" rx="62" ry="50" fill="url(#lensGrad)" opacity="0.55"/>
+                <rect x="141" y="80" width="18" height="20" rx="4" fill="#0B2436"/>
+                <path d="M33 90C10 90 -6 96 -14 90" stroke="#EAF3F8" stroke-width="3" opacity="0.5"/>
+                <path d="M267 90C290 90 306 96 314 90" stroke="#EAF3F8" stroke-width="3" opacity="0.5"/>
+              </svg>
+            </div>
+            <div class="product-body">
+              <p class="product-sub">Modelo 01 — Racing</p>
+              <h3>Horizonte</h3>
+              <ul class="specs">
+                <li>Campo de visión<b>180°</b></li>
+                <li>Lente<b>Espejada UV</b></li>
+                <li>Sellado<b>Doble silicona</b></li>
+                <li>Uso recomendado<b>+3 km</b></li>
+              </ul>
+              <div class="product-footer">
+                <span class="price">$1,290 MXN</span>
+                <button class="add-btn" data-id="horizonte" data-name="Horizonte" data-price="1290">Agregar</button>
+              </div>
+            </div>
+          </article>
+ 
+          <article class="product-card">
+            <div class="product-media">
+              <span class="product-badge">Triatlón</span>
+              <svg viewBox="0 0 300 180" fill="none">
+                <ellipse cx="95" cy="90" rx="54" ry="40" fill="#12587D" stroke="#3FB6E0" stroke-width="2"/>
+                <ellipse cx="205" cy="90" rx="54" ry="40" fill="#12587D" stroke="#3FB6E0" stroke-width="2"/>
+                <ellipse cx="95" cy="90" rx="54" ry="40" fill="url(#lensGrad)" opacity="0.55"/>
+                <ellipse cx="205" cy="90" rx="54" ry="40" fill="url(#lensGrad)" opacity="0.55"/>
+                <rect x="141" y="82" width="18" height="16" rx="4" fill="#0B2436"/>
+                <path d="M41 90C18 88 2 92 -6 84" stroke="#EAF3F8" stroke-width="3" opacity="0.5"/>
+                <path d="M259 90C282 88 298 92 306 84" stroke="#EAF3F8" stroke-width="3" opacity="0.5"/>
+              </svg>
+            </div>
+            <div class="product-body">
+              <p class="product-sub">Modelo 02 — Low Profile</p>
+              <h3>Riptide</h3>
+              <ul class="specs">
+                <li>Perfil<b>Bajo / anti-arrastre</b></li>
+                <li>Hebilla<b>Liberación rápida</b></li>
+                <li>Sellado<b>Anti-empañante</b></li>
+                <li>Uso recomendado<b>Sprint - Full</b></li>
+              </ul>
+              <div class="product-footer">
+                <span class="price">$1,190 MXN</span>
+                <button class="add-btn" data-id="riptide" data-name="Riptide" data-price="1190">Agregar</button>
+              </div>
+            </div>
+          </article>
+ 
+        </div>
+      </div>
+    </section>
+ 
+    <section class="tech" id="tecnologia">
+      <div class="wrap tech-grid">
+        <div class="tech-visual">
+          <svg viewBox="0 0 320 320" fill="none">
+            <circle cx="160" cy="160" r="130" stroke="#1C5C86" stroke-width="1"/>
+            <circle cx="160" cy="160" r="95" stroke="#1C5C86" stroke-width="1" stroke-dasharray="1 7"/>
+            <ellipse cx="160" cy="160" rx="70" ry="56" fill="url(#lensGrad)" opacity="0.5" stroke="#3FB6E0" stroke-width="1.5"/>
+            <path d="M160 104v112M104 160h112" stroke="#3FB6E0" stroke-width="0.8" opacity="0.5"/>
+            <circle cx="160" cy="160" r="4" fill="#3FB6E0"/>
+          </svg>
+        </div>
+        <div>
+          <div class="tag-eyebrow" style="color:var(--aqua)">Tecnología</div>
+          <div class="section-head" style="margin-bottom:12px;">
+            <h2>De la piscina<br>al oleaje abierto</h2>
+          </div>
+          <ul class="tech-list">
+            <li>
+              <span class="tech-num">01</span>
+              <div><h4>Óptica curva de gran ángulo</h4><p>La curvatura de la lente amplía el campo periférico sin distorsionar la distancia a boyas o embarcaciones de apoyo.</p></div>
+            </li>
+            <li>
+              <span class="tech-num">02</span>
+              <div><h4>Empaque de silicona de doble densidad</h4><p>Una capa firme sostiene la forma; una capa suave sella contra el rostro incluso con agua fría o movimiento del oleaje.</p></div>
+            </li>
+            <li>
+              <span class="tech-num">03</span>
+              <div><h4>Recubrimiento antiempañante de larga duración</h4><p>Tratamiento interno que resiste más lavadas que el recubrimiento estándar, pensado para entrenamientos largos.</p></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+ 
+    <section class="faq" id="preguntas">
+      <div class="wrap">
+        <div class="tag-eyebrow">De primera mano</div>
+        <div class="section-head">
+          <h2>Lo que todos<br>preguntan primero</h2>
+          <p>Respuestas directas de quienes ya los probaron en agua abierta. Se irán completando con cada nueva reseña.</p>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              <span>¿Entró agua?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-a"><p>Espacio para respuesta — completar con la experiencia real del probador.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              <span>¿Se empañó?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-a"><p>Espacio para respuesta — completar con la experiencia real del probador.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              <span>¿Te dolió?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-a"><p>Espacio para respuesta — completar con la experiencia real del probador.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              <span>¿Te distrajo?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-a"><p>Espacio para respuesta — completar con la experiencia real del probador.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" aria-expanded="false">
+              <span>¿Lo usarías en competencia?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-a"><p>Espacio para respuesta — completar con la experiencia real del probador.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <section class="voices" id="voces">
+      <div class="wrap">
+        <div class="tag-eyebrow">Quiénes los usan</div>
+        <div class="section-head">
+          <h2>Probados en<br>competencia</h2>
+          <p>Testimonios de nadadores y triatletas que entrenan en aguas abiertas de forma regular.</p>
+        </div>
+        <div class="voices-grid">
+          <div class="voice-card">
+            <p class="quote">"Dejé de perder la boya de vista a media travesía. La diferencia está en cuánto se ve por los costados."</p>
+            <div class="voice-meta"><b>Triatleta amateur</b>Distancia Ironman 70.3</div>
+          </div>
+          <div class="voice-card">
+            <p class="quote">"El sellado aguantó una hora en agua a 14°C sin filtrarse ni una vez."</p>
+            <div class="voice-meta"><b>Nadadora de aguas abiertas</b>Cruce de 10 km</div>
+          </div>
+          <div class="voice-card">
+            <p class="quote">"Salgo del agua, tiro de la hebilla y ya estoy poniéndome el casco. No pierdo tiempo ajustando nada."</p>
+            <div class="voice-meta"><b>Triatleta de sprint</b>Categoría age-group</div>
+          </div>
+        </div>
+ 
+        <div class="video-testimonial">
+          <div class="video-frame">
+            <!-- Reemplaza este bloque por tu <video> o un <iframe> embebido (YouTube/Vimeo) -->
+            <div class="video-placeholder">
+              <span class="play-btn" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7-11-7z" fill="#071A2C"/></svg>
+              </span>
+              <p class="video-label">Espacio para video de opinión</p>
+              <p class="video-dim mono">1920 × 1080</p>
+            </div>
+          </div>
+          <div class="video-caption">
+            <span class="tag-eyebrow" style="margin-bottom:6px;">Opinión en video</span>
+            <p>Reserva este espacio para la reseña en video de un atleta usando sus Ketheryon en agua abierta.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <section class="cta-band">
+      <div class="wrap cta-inner">
+        <h2>Recibe rutas de entrenamiento en aguas abiertas y acceso anticipado a nuevos modelos.</h2>
+        <form class="cta-form" id="newsletterForm">
+          <input type="email" placeholder="tu@correo.com" required aria-label="Correo electrónico">
+          <button type="submit">Suscribirme</button>
+        </form>
+      </div>
+    </section>
+  </main>
+ 
+  <footer>
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#top" class="logo">Ketheryon</a>
+          <p>Goggles diseñados en México para nadadores de aguas abiertas y triatletas que entrenan fuera del carril.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Producto</h5>
+          <ul>
+            <li><a href="#productos">Horizonte</a></li>
+            <li><a href="#productos">Riptide</a></li>
+            <li><a href="#tecnologia">Tecnología</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Marca</h5>
+          <ul>
+            <li><a href="#filosofia">Nuestra visión</a></li>
+            <li><a href="#voces">Atletas</a></li>
+            <li><a href="#top">Contacto</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Ketheryon. Todos los derechos reservados.</span>
+        <span>Hecho para el agua abierta.</span>
+      </div>
+    </div>
+  </footer>
+ 
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="drawer" aria-label="Carrito de compras">
+    <div class="drawer-head">
+      <h3>Tu carrito</h3>
+      <button class="drawer-close" id="drawerClose" aria-label="Cerrar carrito">&times;</button>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+      <p class="drawer-empty">Tu carrito está vacío todavía.</p>
+    </div>
+    <div class="drawer-foot">
+      <div class="drawer-total"><span>Total</span><b id="drawerTotal">$0 MXN</b></div>
+      <button class="checkout-btn" id="checkoutBtn">Finalizar compra</button>
+      <p class="drawer-note">Demo de tienda: conecta una pasarela de pago (p. ej. Stripe) para procesar cobros reales.</p>
+    </div>
+  </aside>
+ 
+  <div class="toast" id="toast"><span class="dot"></span><span id="toastText">Agregado al carrito</span></div>
+ 
+<script>
+  // Scroll: header state + horizon progress
+  const header = document.getElementById('siteHeader');
+  const fill = document.getElementById('horizonFill');
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    header.classList.toggle('scrolled', y > 40);
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    fill.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+  });
+ 
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const btn = item.querySelector('.faq-q');
+    btn.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(o => {
+        o.classList.remove('open');
+        o.querySelector('.faq-q').setAttribute('aria-expanded','false');
+      });
+      if(!isOpen){
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+      }
+    });
+  });
+ 
+  // Cart
+  const cart = {};
+  const products = {
+    horizonte: { name:'Horizonte', price:1290 },
+    riptide: { name:'Riptide', price:1190 }
+  };
+ 
+  const cartCount = document.getElementById('cartCount');
+  const drawer = document.getElementById('drawer');
+  const overlay = document.getElementById('overlay');
+  const drawerBody = document.getElementById('drawerBody');
+  const drawerTotal = document.getElementById('drawerTotal');
+  const toast = document.getElementById('toast');
+  const toastText = document.getElementById('toastText');
+ 
+  function fmt(n){ return '$' + n.toLocaleString('es-MX') + ' MXN'; }
+ 
+  function showToast(msg){
+    toastText.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(()=> toast.classList.remove('show'), 2200);
+  }
+ 
+  function renderCart(){
+    const ids = Object.keys(cart).filter(id => cart[id] > 0);
+    const totalItems = ids.reduce((s,id)=> s + cart[id], 0);
+    cartCount.textContent = totalItems;
+ 
+    if(ids.length === 0){
+      drawerBody.innerHTML = '<p class="drawer-empty">Tu carrito está vacío todavía.</p>';
+      drawerTotal.textContent = fmt(0);
+      return;
+    }
+ 
+    let total = 0;
+    drawerBody.innerHTML = ids.map(id => {
+      const p = products[id];
+      const qty = cart[id];
+      const subtotal = p.price * qty;
+      total += subtotal;
+      return `
+        <div class="cart-item" data-item="${id}">
+          <div class="cart-item-thumb">
+            <svg viewBox="0 0 60 40" fill="none">
+              <ellipse cx="18" cy="20" rx="14" ry="11" fill="#12587D" stroke="#3FB6E0" stroke-width="1.4"/>
+              <ellipse cx="42" cy="20" rx="14" ry="11" fill="#12587D" stroke="#3FB6E0" stroke-width="1.4"/>
+              <rect x="27" y="16" width="6" height="8" rx="2" fill="#0B2436"/>
+            </svg>
+          </div>
+          <div>
+            <div class="cart-item-name">${p.name}</div>
+            <div class="cart-item-price">${fmt(p.price)}</div>
+            <div class="qty-control">
+              <button data-action="dec" data-id="${id}" aria-label="Quitar uno">−</button>
+              <span>${qty}</span>
+              <button data-action="inc" data-id="${id}" aria-label="Agregar uno">+</button>
+            </div>
+          </div>
+          <div>
+            <div class="cart-item-price">${fmt(subtotal)}</div>
+            <button class="remove-btn" data-action="remove" data-id="${id}">Quitar</button>
+          </div>
+        </div>`;
+    }).join('');
+    drawerTotal.textContent = fmt(total);
+  }
+ 
+  function openDrawer(){
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+  }
+  function closeDrawer(){
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+ 
+  document.getElementById('cartToggle').addEventListener('click', openDrawer);
+  document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+ 
+  document.querySelectorAll('.add-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      cart[id] = (cart[id] || 0) + 1;
+      renderCart();
+      showToast(products[id].name + ' agregado al carrito');
+      openDrawer();
+    });
+  });
+ 
+  drawerBody.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if(!btn) return;
+    const id = btn.dataset.id;
+    const action = btn.dataset.action;
+    if(action === 'inc') cart[id] += 1;
+    if(action === 'dec') cart[id] = Math.max(0, cart[id] - 1);
+    if(action === 'remove') cart[id] = 0;
+    renderCart();
+  });
+ 
+  document.getElementById('checkoutBtn').addEventListener('click', () => {
+    const totalItems = Object.values(cart).reduce((s,q)=>s+q,0);
+    if(totalItems === 0){
+      showToast('Agrega al menos un producto');
+      return;
+    }
+    showToast('Simulación de pago: aquí se conectaría tu pasarela real');
+  });
+ 
+  document.getElementById('newsletterForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    showToast('¡Gracias! Te avisaremos por correo.');
+    e.target.reset();
+  });
+</script>
+ 
+</body>
+</html>
