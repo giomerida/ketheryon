@@ -87,6 +87,8 @@
  
   /* ---------- Nav ---------- */
   header{
+    background: rgba(7,26,44,0.92);
+    backdrop-filter: blur(5px);
     position:fixed;
     top:3px;left:0;right:0;
     z-index:50;
@@ -199,12 +201,21 @@
  
   /* ---------- Hero (declaración, bajo el banner) ---------- */
   .hero{
-    background:var(--abyss);
-    color:var(--foam);
-    padding:20px 0 110px;
-    position:relative;
-    overflow:hidden;
-  }
+    background:
+        linear-gradient(rgba(6, 12, 20, 0.70), rgba(6, 12, 20, 0.70)),
+        url("img/fondo_web_ketheryon.png");
+
+    background-color: var(--abyss);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    color: var(--foam);
+    padding: 20px 0 110px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 80px;
+}
   .hero::after{
     content:'';
     position:absolute;
@@ -757,13 +768,6 @@
   </header>
  
   <main id="top">
-    <section class="banner">
-      <img src="img/ketheryon-banner.jpg" alt="Ketheryon — ballena emergiendo del océano, adáptate al agua" class="banner-img">
-      <div class="banner-fade"></div>
-      <a href="#intro" class="scroll-cue" aria-label="Bajar a la siguiente sección">
-        <span></span>
-      </a>
-    </section>
  
     <section class="hero" id="intro">
       <div class="wrap hero-single">
@@ -779,6 +783,9 @@
           <div class="stat"><div class="num">12°C</div><div class="label">Sellado probado desde</div></div>
           <div class="stat"><div class="num">02</div><div class="label">Modelos disponibles</div></div>
         </div>
+        <a href="#intro" class="scroll-cue" aria-label="Bajar a la siguiente sección">
+        <span></span>
+      </a>
       </div>
     </section>
  
