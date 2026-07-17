@@ -518,7 +518,7 @@
   .video-testimonial{
     margin-top:64px;
     display:grid;
-    grid-template-columns:1fr 320px;
+    grid-template-columns: minmax(315px,560px) 1fr;
     gap:40px;
     align-items:center;
     padding-top:56px;
@@ -526,7 +526,7 @@
   }
   .video-frame{
     background:var(--abyss);
-    aspect-ratio:1080/1920;
+    aspect-ratio:560/315;
     position:relative;
     overflow:hidden;
     border:1px solid rgba(234,243,248,0.1);
@@ -993,17 +993,18 @@
         <div class="video-testimonial">
           <div class="video-frame">
             <!-- Reemplaza este bloque por tu <video> o un <iframe> embebido (YouTube/Vimeo) -->
-            <div class="video-placeholder">
+            <!-- <div class="video-placeholder">
               <span class="play-btn" aria-hidden="true">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7-11-7z" fill="#071A2C"/></svg>
               </span>
               <p class="video-label">Espacio para video de opinión</p>
               <p class="video-dim mono">1920 × 1080</p>
-            </div>
+            </div> -->
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/R6awmLOxqNA" frameborder="0" allowfullscreen></iframe>
           </div>
           <div class="video-caption">
             <span class="tag-eyebrow" style="margin-bottom:6px;">Opinión en video</span>
-            <p>Reserva este espacio para la reseña en video de un atleta usando sus Ketheryon en agua abierta.</p>
+            <p>Opinión de un atleta de aguas abiertas.</p>
           </div>
         </div>
       </div>
