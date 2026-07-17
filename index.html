@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ketheryon — Goggles para aguas abiertas y triatlón</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -717,6 +718,47 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--aqua);}
+
+   /* ---------- Botón de subida ---------- */
+  #backToTop{
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 50%;
+    background: var(--aqua);
+    color: var(--abyss);
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,.25);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+
+    transition:
+        opacity .35s ease,
+        transform .35s ease,
+        background .3s ease;
+}
+
+#backToTop:hover{
+    box-shadow:
+        0 0 25px rgba(63,182,224,.35),
+        0 12px 30px rgba(0,0,0,.3);
+}
+
+#backToTop.show{
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
  
   @media (max-width:860px){
     .tech-grid{grid-template-columns:1fr;}
@@ -1215,6 +1257,36 @@
     e.target.reset();
   });
 </script>
- 
+
+<button id="backToTop" aria-label="Volver arriba">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
+        <path d="M12 5l-7 7h4v7h6v-7h4l-7-7z"
+              fill="currentColor"/>
+    </svg>
+</button>
+
+<script>
+const backToTop = document.getElementById("backToTop");
+
+window.addEventListener("scroll", () => {
+
+    if(window.scrollY > 400){
+        backToTop.classList.add("show");
+    }else{
+        backToTop.classList.remove("show");
+    }
+
+});
+
+backToTop.addEventListener("click", () => {
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+});
+</script>
+
 </body>
 </html>
