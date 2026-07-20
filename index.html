@@ -379,6 +379,102 @@
     margin-top:36px !important;
   }
  
+  .gallery{
+    margin-top:40px;
+
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+
+    gap:18px;
+}
+
+.gallery-item{
+
+    width:100%;
+    aspect-ratio:1/1;
+
+    object-fit:cover;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+    border:1px solid rgba(255,255,255,.08);
+
+}
+
+.gallery-item:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:0 18px 35px rgba(0,0,0,.25);
+
+}
+
+.lightbox{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.92);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:.3s;
+
+    z-index:9999;
+
+}
+
+.lightbox.active{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+.lightbox-image{
+
+    max-width:90%;
+
+    max-height:90%;
+
+    border-radius:14px;
+
+    box-shadow:0 30px 60px rgba(0,0,0,.45);
+
+}
+
+.close{
+
+    position:absolute;
+
+    top:30px;
+
+    right:40px;
+
+    color:white;
+
+    font-size:42px;
+
+    cursor:pointer;
+
+    font-family:sans-serif;
+
+}
+
   /* ---------- Products ---------- */
   .products{background:var(--foam-2);}
   .product-grid{
@@ -876,6 +972,29 @@
           <p class="story-pull">Inspirar a las personas a adaptarse, evolucionar y renacer en cada reto.</p>
           <p>Porque el agua cambia de forma, pero nunca pierde su esencia.</p>
           <p class="story-signoff">KETHERYON — Adáptate al agua 🌊🐋</p>
+          <div class="gallery">
+
+    <img src="img/galeria/imagen1.jpg"
+         alt="Ketheryon 1"
+         class="gallery-item">
+
+    <img src="img/galeria/imagen2.jpg"
+         alt="Ketheryon 2"
+         class="gallery-item">
+
+    <img src="img/galeria/imagen3.jpg"
+         alt="Ketheryon 3"
+         class="gallery-item">
+
+</div>
+
+<div class="lightbox" id="lightbox">
+
+    <span class="close">&times;</span>
+
+    <img class="lightbox-image" id="lightboxImage">
+
+</div>
         </div>
       </div>
     </section>
@@ -1258,6 +1377,8 @@
   });
 </script>
 
+<!-- Boton de subir al inicio -->
+
 <button id="backToTop" aria-label="Volver arriba">
     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
         <path d="M12 5l-7 7h4v7h6v-7h4l-7-7z"
@@ -1286,6 +1407,47 @@ backToTop.addEventListener("click", () => {
     });
 
 });
+</script>
+
+<!-- minigaleria -->
+ <script>
+
+const galleryItems = document.querySelectorAll(".gallery-item");
+
+const lightbox = document.getElementById("lightbox");
+
+const lightboxImage = document.getElementById("lightboxImage");
+
+const close = document.querySelector(".close");
+
+galleryItems.forEach(item=>{
+
+    item.addEventListener("click",()=>{
+
+        lightbox.classList.add("active");
+
+        lightboxImage.src=item.src;
+
+    });
+
+});
+
+close.addEventListener("click",()=>{
+
+    lightbox.classList.remove("active");
+
+});
+
+lightbox.addEventListener("click",(e)=>{
+
+    if(e.target===lightbox){
+
+        lightbox.classList.remove("active");
+
+    }
+
+});
+
 </script>
 
 </body>
