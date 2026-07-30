@@ -901,6 +901,79 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--aqua);}
 
+  /* ---------- Modal noticia completa ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;
+    background:rgba(7,26,44,0.65);
+    opacity:0;pointer-events:none;
+    transition:opacity 0.3s ease;
+    z-index:95;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .modal-overlay.open{opacity:1;pointer-events:auto;}
+  .modal{
+    background:var(--foam-2);
+    max-width:680px;
+    width:100%;
+    max-height:85vh;
+    overflow-y:auto;
+    padding:44px 44px 40px;
+    position:relative;
+    transform:translateY(16px);
+    opacity:0;
+    transition:all 0.3s ease;
+  }
+  .modal-overlay.open .modal{transform:translateY(0);opacity:1;}
+  .modal-close{
+    position:absolute;
+    top:20px;right:22px;
+    font-size:24px;
+    color:var(--mist);
+    line-height:1;
+  }
+  .modal-close:hover{color:var(--ocean);}
+  .modal-date{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    color:var(--ocean);
+    letter-spacing:0.05em;
+    display:block;
+    margin-bottom:16px;
+  }
+  .modal h3{
+    font-size:clamp(26px,3.4vw,36px);
+    color:var(--ink);
+    margin-bottom:22px;
+    max-width:520px;
+  }
+  .modal p{
+    color:var(--mist);
+    font-size:15px;
+    margin-bottom:18px;
+  }
+  .modal p:last-child{margin-bottom:0;}
+ 
+  .toast{
+    position:fixed;
+    bottom:28px;left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--abyss);
+    color:var(--foam);
+    padding:14px 22px;
+    font-size:13.5px;
+    border:1px solid var(--aqua-dim);
+    opacity:0;
+    pointer-events:none;
+    transition:all .3s ease;
+    z-index:90;
+    display:flex;align-items:center;gap:10px;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--aqua);}
+
    /* ---------- Botón de subida ---------- */
   #backToTop{
     position: fixed;
@@ -1365,7 +1438,6 @@
       <p>México se proclamó campeón de aguas abiertas en los Juegos Centroamericanos y del Caribe de Santo Domingo con 3 oros, 2 platas y 2 bronces.</p>
       <p>"Queríamos que cada decisión de diseño respondiera a una nPaulo Strehlke у Dalia Moreno ganaron el oro en la prueba de 3 km Sprint Knock-Out.cesidad real de quien nada en mar abierto, no a lo que se ve bien en una vitrina", comentó el equipo fundador durante la presentación.</p>
       <p>Del 6 al 7 de noviembre, Cancún recibirá la primera fecha de la Open Water Swimming Work V p.</p>
-      <p><em>Este es un texto de ejemplo — sustitúyelo por la nota de prensa real cuando la tengas lista.</em></p>
     </div>
   </div>
 
