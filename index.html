@@ -701,7 +701,93 @@
     white-space:nowrap;
   }
   .cta-form button:hover{background:var(--aqua);color:var(--abyss);}
- 
+
+  /* ---------- Noticias ---------- */
+  .news{background:var(--foam);}
+  .news-title{
+    font-size:clamp(30px,4vw,48px);
+    color:var(--ink);
+    max-width:820px;
+    margin-bottom:56px;
+  }
+  .news-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:48px;
+    align-items:stretch;
+  }
+  .news-media{
+    background:var(--abyss);
+    aspect-ratio:4/3;
+    min-height:320px;
+  }
+  .news-media-placeholder{
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    color:var(--mist);
+    font-size:13px;
+    background:radial-gradient(ellipse at 50% 40%, var(--deep), var(--abyss) 75%);
+  }
+  .news-info{
+    display:flex;
+    flex-direction:column;
+  }
+  .news-date{
+    font-size:12.5px;
+    color:var(--ocean);
+    letter-spacing:0.05em;
+    margin-bottom:20px;
+  }
+  .news-info p{
+    color:var(--mist);
+    font-size:15.5px;
+    margin-bottom:20px;
+  }
+  .news-btn{
+    align-self:flex-start;
+    margin-top:12px;
+  }
+
+  /* ---------- Newsletter / CTA ---------- */
+  .cta-band{
+    background:var(--ocean);
+    color:var(--foam);
+    padding:90px 0;
+  }
+  .cta-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:40px;
+    flex-wrap:wrap;
+  }
+  .cta-inner h2{font-size:clamp(28px,3.4vw,42px);max-width:520px;}
+  .cta-form{display:flex;gap:10px;}
+  .cta-form input{
+    background:rgba(7,26,44,0.2);
+    border:1px solid rgba(234,243,248,0.35);
+    padding:14px 16px;
+    color:var(--foam);
+    font-size:14px;
+    min-width:240px;
+  }
+  .cta-form input::placeholder{color:rgba(234,243,248,0.6);}
+  .cta-form button{
+    background:var(--abyss);
+    color:var(--foam);
+    padding:14px 24px;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .cta-form button:hover{background:var(--aqua);color:var(--abyss);} 
+
   /* ---------- Footer ---------- */
   footer{background:var(--abyss);color:var(--mist);padding:60px 0 34px;}
   .footer-grid{
@@ -1175,6 +1261,30 @@
         </div>
       </div>
     </section>
+
+    <section class="news" id="noticias">
+      <div class="wrap">
+        <div class="tag-eyebrow">Noticias</div>
+        <h2 class="news-title">La selección mexicana lidera la región.</h2>
+ 
+        <div class="news-grid">
+          <div class="news-media">
+            <!-- Reemplaza este bloque por la foto real de la noticia (<img src="..."> ) -->
+            <div class="news-media-placeholder">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="1.5" stroke="#3FB6E0" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="#3FB6E0" stroke-width="1.4"/><path d="M3 16l5.5-4.5L13 15l3-2.5L21 16" stroke="#3FB6E0" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              <span>Espacio para foto de la noticia</span>
+            </div>
+          </div>
+ 
+          <div class="news-info">
+            <span class="news-date mono">29 Julio 2026 — Los Cabos, BCS</span>
+            <p>La selección mexicana lidera la región y Cancún se prepara para la Copa del Mundo.</p>
+            <p>México se proclamó campeón de aguas abiertas en los Juegos Centroamericanos y del Caribe de Santo Domingo con 3 oros, 2 platas y 2 bronces...</p>
+            <button class="btn btn-primary news-btn" id="openNews">Ver nota completa</button>
+          </div>
+        </div>
+      </div>
+    </section>
  
     <section class="cta-band">
       <div class="wrap cta-inner">
@@ -1185,8 +1295,19 @@
         </form>
       </div>
     </section>
-  </main>
  
+    <section class="cta-band">
+      <div class="wrap cta-inner">
+        <h2>Recibe rutas de entrenamiento en aguas abiertas y acceso anticipado a nuevos modelos.</h2>
+        <form class="cta-form" id="newsletterForm">
+          <input type="email" placeholder="tu@correo.com" required aria-label="Correo electrónico">
+          <button type="submit">Suscribirme</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
   <footer>
     <div class="wrap">
       <div class="footer-grid">
@@ -1234,6 +1355,20 @@
     </div>
   </aside>
  
+  <div class="modal-overlay" id="newsOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="newsModalTitle">
+      <button class="modal-close" id="newsClose" aria-label="Cerrar nota">&times;</button>
+      <span class="modal-date mono">29 Julio 2026 — Los Cabos, BCS</span>
+      <h3 id="newsModalTitle">México Llega Fortalecido.</h3>
+      <!-- Reemplaza los siguientes párrafos por el texto real de la nota completa -->
+      <p>La selección mexicana lidera la región y Cancún se prepara para la Copa del Mundo.</p>
+      <p>México se proclamó campeón de aguas abiertas en los Juegos Centroamericanos y del Caribe de Santo Domingo con 3 oros, 2 platas y 2 bronces.</p>
+      <p>"Queríamos que cada decisión de diseño respondiera a una nPaulo Strehlke у Dalia Moreno ganaron el oro en la prueba de 3 km Sprint Knock-Out.cesidad real de quien nada en mar abierto, no a lo que se ve bien en una vitrina", comentó el equipo fundador durante la presentación.</p>
+      <p>Del 6 al 7 de noviembre, Cancún recibirá la primera fecha de la Open Water Swimming Work V p.</p>
+      <p><em>Este es un texto de ejemplo — sustitúyelo por la nota de prensa real cuando la tengas lista.</em></p>
+    </div>
+  </div>
+
   <div class="toast" id="toast"><span class="dot"></span><span id="toastText">Agregado al carrito</span></div>
  
 <script>
