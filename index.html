@@ -1100,6 +1100,21 @@
   @media (prefers-reduced-motion: reduce){
     *{transition:none !important; scroll-behavior:auto !important; animation:none !important;}
   }
+
+  @media (max-width: 768px){
+
+    .news-grid{
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .news-media{
+        aspect-ratio: 16 / 9;
+        min-height: 0;
+        max-height: none;
+    }
+
+}
 </style>
 </head>
 <body>
