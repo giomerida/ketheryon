@@ -27,6 +27,7 @@
           <a href="#tecnologia">Tecnología</a>
           <a href="#voces">Atletas</a>
           <a href="#eventos">Eventos</a> 
+          <a href="#galeria">Galería</a> 
         </div>
         <div class="nav-right">
           <button class="cart-btn" id="cartToggle" aria-label="Abrir carrito">
@@ -394,6 +395,120 @@
         </div>
       </div>
     </section>
+    
+    <!-- Galería -->
+    <section class="event-gallery" id="galeria">
+
+    <div class="wrap">
+
+        <!-- Encabezado -->
+        <div class="gallery-header">
+
+            <div>
+                <span class="tag-eyebrow">Momentos Ketheryon</span>
+
+                <h2 class="gallery-title">
+                    Furia bajo<br>la luna.
+                </h2>
+            </div>
+
+            <div class="gallery-description">
+                <span class="gallery-date mono">
+                    08 AGOSTO 2026 — PUEBLA, MÉXICO
+                </span>
+
+                <p>
+                    Una experiencia que nos recuerda que cada brazada
+                    representa un desafío superado. Revive los mejores
+                    momentos de esta aventura en aguas abiertas.
+                </p>
+            </div>
+
+        </div>
+        
+        <!-- Fotos -->
+
+        <div class="event-gallery-grid">
+
+            <button class="gallery-photo photo-large" data-index="0">
+                <img src="img/galeria/evento1.jpg"
+                     alt="Atletas durante la competencia"
+                     loading="lazy">
+                <span class="photo-overlay">01 / 06</span>
+            </button>
+
+            <button class="gallery-photo" data-index="1">
+                <img src="img/galeria/evento2.jpg"
+                     alt="Nadadores en aguas abiertas"
+                     loading="lazy">
+                <span class="photo-overlay">02 / 06</span>
+            </button>
+
+            <button class="gallery-photo" data-index="2">
+                <img src="img/galeria/evento3.jpg"
+                     alt="Participantes del evento"
+                     loading="lazy">
+                <span class="photo-overlay">03 / 06</span>
+            </button>
+
+            <button class="gallery-photo" data-index="3">
+                <img src="img/galeria/evento4.jpg"
+                     alt="Competencia de natación"
+                     loading="lazy">
+                <span class="photo-overlay">04 / 06</span>
+            </button>
+
+            <button class="gallery-photo" data-index="4">
+                <img src="img/galeria/evento5.jpg"
+                     alt="Atletas durante el recorrido"
+                     loading="lazy">
+                <span class="photo-overlay">05 / 06</span>
+            </button>
+
+            <button class="gallery-photo" data-index="5">
+                <img src="img/galeria/evento6.jpg"
+                     alt="Momentos de la competencia"
+                     loading="lazy">
+                <span class="photo-overlay">06 / 06</span>
+            </button>
+
+        </div>
+
+        <div class="gallery-footer">
+            <span class="mono">KETHERYON — ADÁPTATE AL AGUA</span>
+            <span>06 FOTOGRAFÍAS</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- VISUALIZADOR DE FOTOGRAFÍAS -->
+<div class="gallery-lightbox" id="galleryLightbox">
+
+    <button class="gallery-close" id="galleryClose"
+            aria-label="Cerrar galería">&times;</button>
+
+    <button class="gallery-nav gallery-prev"
+            id="galleryPrev" aria-label="Fotografía anterior">
+        &#8592;
+    </button>
+
+    <div class="gallery-lightbox-content">
+
+        <img src="" alt="" id="galleryFullImage">
+
+        <span id="galleryCounter" class="mono"></span>
+
+    </div>
+
+    <button class="gallery-nav gallery-next"
+            id="galleryNext" aria-label="Fotografía siguiente">
+        &#8594;
+    </button>
+
+</div>
 
     <section class="cta-band">
       <div class="wrap cta-inner">
@@ -631,6 +746,107 @@ Pacheco; y el Comité Olímpico Mexicano, encabezado por Marijose Alcalá.</p>
     showToast('¡Gracias! Te avisaremos por correo.');
     e.target.reset();
   });
+</script>
+
+<!-- JS Galería -->
+<script>
+
+const galleryPhotos = document.querySelectorAll(".gallery-photo");
+const galleryLightbox = document.getElementById("galleryLightbox");
+const galleryFullImage = document.getElementById("galleryFullImage");
+const galleryCounter = document.getElementById("galleryCounter");
+
+const galleryClose = document.getElementById("galleryClose");
+const galleryPrev = document.getElementById("galleryPrev");
+const galleryNext = document.getElementById("galleryNext");
+
+let currentImage = 0;
+
+const galleryImages = Array.from(galleryPhotos).map(photo => ({
+    src: photo.querySelector("img").src,
+    alt: photo.querySelector("img").alt
+}));
+
+function showGalleryImage(index){
+
+    currentImage = (index + galleryImages.length) % galleryImages.length;
+
+    galleryFullImage.src = galleryImages[currentImage].src;
+    galleryFullImage.alt = galleryImages[currentImage].alt;
+
+    galleryCounter.textContent =
+        `${String(currentImage + 1).padStart(2,"0")} / ${String(galleryImages.length).padStart(2,"0")}`;
+
+}
+
+function openGallery(index){
+
+    showGalleryImage(index);
+
+    galleryLightbox.classList.add("active");
+
+    document.body.style.overflow = "hidden";
+
+}
+
+function closeGallery(){
+
+    galleryLightbox.classList.remove("active");
+
+    document.body.style.overflow = "";
+
+}
+
+galleryPhotos.forEach((photo,index)=>{
+
+    photo.addEventListener("click",()=>{
+
+        openGallery(index);
+
+    });
+
+});
+
+galleryClose.addEventListener("click",closeGallery);
+
+galleryPrev.addEventListener("click",()=>{
+
+    showGalleryImage(currentImage - 1);
+
+});
+
+galleryNext.addEventListener("click",()=>{
+
+    showGalleryImage(currentImage + 1);
+
+});
+
+galleryLightbox.addEventListener("click",(e)=>{
+
+    if(e.target === galleryLightbox){
+
+        closeGallery();
+
+    }
+
+});
+
+document.addEventListener("keydown",(e)=>{
+
+    if(!galleryLightbox.classList.contains("active")) return;
+
+    if(e.key === "Escape") closeGallery();
+
+    if(e.key === "ArrowRight"){
+        showGalleryImage(currentImage + 1);
+    }
+
+    if(e.key === "ArrowLeft"){
+        showGalleryImage(currentImage - 1);
+    }
+
+});
+
 </script>
 
 <!-- Boton de subir al inicio -->
